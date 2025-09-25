@@ -1,16 +1,14 @@
-// src/App.tsx
-import { useState } from "react";
+import TipTapEditor from './editor/TipTapEditor';
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <div style={{ padding: 24, fontFamily: "system-ui, sans-serif" }}>
-      <h1>Tiptap Markdown Converter</h1>
-      <p>React + TypeScript is set up and running.</p>
-
-      <button onClick={() => setCount((c) => c + 1)}>Clicks: {count}</button>
-    </div>
+    <main style={{ maxWidth: 900, margin: '2rem auto', padding: '0 1rem' }}>
+      <h1>Tiptap ↔ Markdown Converter — Playground</h1>
+      <p style={{ opacity: 0.8 }}>
+        Step 1 sanity check: the Tiptap editor should work and respond to the toolbar.
+      </p>
+      <TipTapEditor />
+    </main>
   );
 }
 
