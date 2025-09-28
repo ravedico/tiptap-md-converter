@@ -9,6 +9,7 @@ import { tiptapToMd } from '@/markdown-core/tiptap-to-md';
 import { normalizeMarkdown, normalizeTiptapDoc } from '@/markdown-core/normalize';
 import type { JSONContent } from '@tiptap/core';
 import type { TiptapDoc } from '@/markdown-core/types';
+import { useDev } from '@/devtools/dev-context';
 
 const SAMPLE_MD = `# Hello, TipTap ↔ Markdown
 
@@ -33,6 +34,9 @@ console.log('code block');
 `;
 
 export default function App() {
+  const dev = useDev();
+  console.debug('DEV CTX', dev);
+
   // Left pane (Markdown as text)
   const [markdown, setMarkdown] = useState<string>(SAMPLE_MD);
   const markdownRef = useRef<string>(SAMPLE_MD);

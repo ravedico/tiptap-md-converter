@@ -126,7 +126,6 @@ const bulletList: MdPlugin = {
     } as MdNode;
 
     tighten(md);
-    console.dir(md, { depth: 10 });
     return md;
   },
 };
