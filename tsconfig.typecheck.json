@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "references": [],
+  "files": [],
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules", "dist", "build", "**/*.d.ts", "**/*.d.cts", "**/*.d.mts"],
+  "compilerOptions": {
+    "noEmit": true,
+    "declaration": false,
+    "emitDeclarationOnly": false,
+    "composite": false,
+    "incremental": false
+  }
+}

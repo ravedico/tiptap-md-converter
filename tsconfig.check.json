@@ -1,9 +1,4 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ],
   "compilerOptions": {
     "target": "es2020",
     "module": "esnext",
@@ -20,10 +15,8 @@
     "incremental": false,
 
     "baseUrl": "./",
-    "paths": { "@/*": ["src/*"] },
-    "types": ["vitest", "node"]
-
+    "paths": { "@/*": ["src/*"] }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src", "tests", "vitest.config.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["**/*.d.ts", "node_modules", "dist", "build", "types"]
 }
