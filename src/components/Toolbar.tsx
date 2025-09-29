@@ -1,4 +1,5 @@
 import type { Editor } from "@tiptap/react";
+import type { Level } from '@tiptap/extension-heading';
 
 export function Toolbar({ editor }: { editor: Editor }) {
   // Run a command against the editor, focusing first
@@ -69,7 +70,7 @@ export function Toolbar({ editor }: { editor: Editor }) {
           if (v === "p") {
             run(() => withFocus().setParagraph().run());
           } else {
-            const level = Number(v);
+            const level = Number(v) as Level;
             run(() => withFocus().toggleHeading({ level }).run());
           }
         }}
