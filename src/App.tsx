@@ -17,7 +17,6 @@ import { tiptapToMd } from '@/markdown-core/tiptap-to-md';
 import './app.css';
 
 import type { JSONContent, Content, Editor as TTEditor } from '@tiptap/core';
-import type { Selection } from '@tiptap/pm/state';
 
 const INITIAL_MD = `# h1 Heading
 ## h2 Heading
