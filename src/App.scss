@@ -63,6 +63,13 @@ body {
     border-radius: 8px;
     padding: 12px;
   }
+  .content{
+    display: flex;align-items: center;
+    justify-content: space-between;
+    a{
+      text-decoration: none;
+    }
+  }
 }
 
 .brand {
@@ -128,7 +135,8 @@ button {
   grid-template-columns: 1fr 1fr;
   gap: 10px;
   padding: 20px;
-  height: calc(100vh - 50px);
+  // height: calc(100vh - 50px);
+  height: 100%;
   padding-top: 0;
 }
 
@@ -370,6 +378,6 @@ code{
   }
 }
 
-.bubble-menu{
+.bubble-menu,.floating-menu{
   display: flex;
 }

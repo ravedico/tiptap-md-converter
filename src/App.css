@@ -69,6 +69,14 @@ body {
   border-radius: 8px;
   padding: 12px;
 }
+.topbar .content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.topbar .content a {
+  text-decoration: none;
+}
 
 .brand {
   font-family: monospace;
@@ -136,7 +144,7 @@ button:active {
   grid-template-columns: 1fr 1fr;
   gap: 10px;
   padding: 20px;
-  height: calc(100vh - 50px);
+  height: 100%;
   padding-top: 0;
 }
 
@@ -406,6 +414,6 @@ code {
   margin: 0;
 }
 
-.bubble-menu {
+.bubble-menu, .floating-menu {
   display: flex;
 }/*# sourceMappingURL=App.css.map */

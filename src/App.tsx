@@ -3,10 +3,10 @@ import { EditorContent, useEditor, BubbleMenu, FloatingMenu } from '@tiptap/reac
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
 
-import { Table } from '@tiptap/extension-table';
-import { TableRow } from '@tiptap/extension-table-row';
-import { TableHeader } from '@tiptap/extension-table-header';
-import { TableCell } from '@tiptap/extension-table-cell';
+import Table from '@tiptap/extension-table';
+import TableRow from '@tiptap/extension-table-row';
+import TableHeader from '@tiptap/extension-table-header';
+import TableCell from '@tiptap/extension-table-cell';
 
 import TaskList from '@tiptap/extension-task-list';
 import TaskItem from '@tiptap/extension-task-item';
@@ -17,6 +17,7 @@ import { tiptapToMd } from '@/markdown-core/tiptap-to-md';
 import './app.css';
 
 import type { JSONContent, Content, Editor as TTEditor } from '@tiptap/core';
+import type { Selection } from '@tiptap/pm/state';
 
 const INITIAL_MD = `# h1 Heading
 ## h2 Heading
@@ -68,17 +69,15 @@ Task list
 | left foo      | right foo     |
 | left bar      | right bar     |
 | left baz      | right baz     |
-
-
-`
-;
+`;
 
 type TiptapDoc = JSONContent;
 
-
 export default function App() {
+  // loop guards
   const lastChange = useRef<'md' | 'tt' | null>(null);
   const settingFromMd = useRef(false);
+  const lastSelection = useRef<{ from: number; to: number } | null>(null);
 
   // Left: Markdown text
   const [markdown, setMarkdown] = useState<string>(INITIAL_MD);
@@ -138,12 +137,21 @@ export default function App() {
       },
     },
     onUpdate: ({ editor: view }: { editor: TTEditor }) => {
+      // Only push to Markdown/JSON if the change came from Tiptap (user typing or toolbar)
       if (settingFromMd.current) return;
       lastChange.current = 'tt';
       const json: TiptapDoc = view.getJSON();
       setJsonView(JSON.stringify(json, null, 2));
       const nextMd = tiptapToMd(json as Parameters<typeof tiptapToMd>[0]);
       setMarkdown(nextMd);
+      // release on next microtask to avoid bouncing
+      queueMicrotask(() => {
+        lastChange.current = null;
+      });
+    },
+    onSelectionUpdate: ({ editor: view }) => {
+      const sel = view.state.selection;
+      lastSelection.current = { from: sel.from, to: sel.to };
     },
   });
 
@@ -157,8 +165,18 @@ export default function App() {
     lastChange.current = 'md';
     settingFromMd.current = true;
 
+    // remember selection (if any)
+    const sel = lastSelection.current;
+
     const doc = convertMdToDoc(markdown);
-    editor.commands.setContent(doc as Content);
+    editor.commands.setContent(doc as Content, false); // false = keep history compact
+    // restore selection near previous cursor
+    if (sel) {
+      const maxPos = editor.state.doc.content.size;
+      const clampedFrom = Math.min(sel.from, Math.max(1, maxPos));
+      const clampedTo = Math.min(sel.to, Math.max(1, maxPos));
+      editor.commands.setTextSelection({ from: clampedFrom, to: clampedTo });
+    }
     setJsonView(JSON.stringify(doc, null, 2));
 
     const t = setTimeout(() => {
@@ -174,11 +192,20 @@ export default function App() {
       const parsed = JSON.parse(raw) as TiptapDoc;
       lastChange.current = 'tt';
       settingFromMd.current = true;
-      editor?.commands.setContent(parsed as Content);
+      const sel = lastSelection.current;
+      editor?.commands.setContent(parsed as Content, false);
+      if (editor && sel) {
+        const maxPos = editor.state.doc.content.size;
+        const clampedFrom = Math.min(sel.from, Math.max(1, maxPos));
+        const clampedTo = Math.min(sel.to, Math.max(1, maxPos));
+        editor.commands.setTextSelection({ from: clampedFrom, to: clampedTo });
+        editor.commands.scrollIntoView();
+      }
       const nextMd = tiptapToMd(parsed as Parameters<typeof tiptapToMd>[0]);
       setMarkdown(nextMd);
       setTimeout(() => {
         settingFromMd.current = false;
+        lastChange.current = null;
       }, 0);
     } catch {
       // ignore until valid JSON
@@ -228,7 +255,14 @@ export default function App() {
       {/* Topbar */}
       <div className="topbar">
         <div className="container">
-          <div className="brand">TipTap 👉 Markdown Converter</div>
+          <div className="content">
+            <div className="brand">TipTap 👉 Markdown Converter</div>
+            <p>
+              <a href="https://github.com/ravedico/tiptap-md-converter" target="_blank">
+                View Repo <i className="ri-external-link-line" />
+              </a>
+            </p>
+          </div>
 
           <div className="buttons-wrap">
             {/* Row 1: Headings + inline formatting */}

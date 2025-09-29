@@ -26,6 +26,6 @@
     "types": ["vitest", "node"]
 
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src", "tests", "vitest.config.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src", "tests", "vitest.config.ts", "src/components/Toolbar.tsx"],
   "exclude": ["**/*.d.ts", "node_modules", "dist", "build", "types"]
 }

@@ -1,11 +1,11 @@
 {
+  "name": "tiptap-md-converter",
+  "version": "0.0.0",
+  "private": true,
   "homepage": "https://ravedico.github.io/tiptap-md-converter/",
-"name": "tiptap-md-converter",
-"private": true,
-"version": "0.0.0",
-"type": "module",
+  "type": "module",
 "scripts": {
-    "predeploy": "npm run build",
+    "predeploy": "npm run build && cp dist/index.html dist/404.html",
     "deploy": "gh-pages -d dist",
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -32,6 +32,7 @@
     "@tiptap/starter-kit": "^2.26.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
+    
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
