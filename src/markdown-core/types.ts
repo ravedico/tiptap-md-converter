@@ -1,12 +1,12 @@
 // src/markdown-core/types.ts
 
 /**
- * Minimal, stable types for our Markdown ↔ Tiptap converters.
- * Broad enough for all plugins, strict enough to avoid `any`.
+ * Types for Markdown ↔ Tiptap converters.
+ * These are broad enough for all plugins, strict enough to avoid `any`.
  */
 
 /* =========================
- * Markdown (remark) shapes
+ * Markdown (remark-like) shapes
  * ========================= */
 export interface MdBase {
   type: string;
@@ -18,9 +18,30 @@ export interface MdParent extends MdBase {
 
 export interface MdLiteral extends MdBase {
   value?: string;
+  url?: string;         // for links
+  lang?: string | null; // for code blocks
+  depth?: number;       // for headings
+  ordered?: boolean;    // for lists
+  checked?: boolean | null; // for task items
 }
 
 export type MdNode = MdParent | MdLiteral | MdBase;
+
+/** Specifically for lists */
+export interface MdList extends MdParent {
+  type: "list";
+  ordered?: boolean;
+  start?: number;      // starting number for ordered lists
+  spread?: boolean;    // tight/loose list formatting hint
+  children: MdListItem[];
+}
+
+export interface MdListItem extends MdParent {
+  type: "listItem";
+  checked?: boolean | null; // task lists
+  spread?: boolean;         // tight/loose list formatting hint
+  children: MdNode[];
+}
 
 /* =========================
  * Tiptap JSON shapes
@@ -35,7 +56,7 @@ export interface TTBase {
 }
 
 export interface TTTextNode extends TTBase {
-  type: 'text';
+  type: "text";
   text: string;
   marks?: TTMark[];
 }
@@ -48,7 +69,7 @@ export interface TTElement extends TTBase {
 export type TTNode = TTTextNode | TTElement;
 
 export interface TiptapDoc {
-  type: 'doc';
+  type: "doc";
   content?: TTNode[];
 }
 
@@ -57,9 +78,9 @@ export interface TiptapDoc {
  * ========================= */
 export interface ConvertCtx {
   /** Markdown → Tiptap */
-  mapMdChildren(nodes: MdNode[]): TTNode[];
+  mapMdChildren(nodes: MdNode[] | undefined): TTNode[];
   /** Tiptap → Markdown */
-  mapTiptapChildren(nodes: TTNode[]): MdNode[];
+  mapTiptapChildren(nodes: TTNode[] | undefined): MdNode[];
   /** Turn a Tiptap text node into a Markdown text node */
   tiptapInlineToMd(text: TTTextNode): MdNode;
 }

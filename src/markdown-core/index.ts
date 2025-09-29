@@ -8,6 +8,10 @@ export * from "./types"; // use regular export to support TS <5 environments
 // Registry exports
 export { plugins, registerPlugins, clearPlugins } from "./registry";
 
+export * from "./types";
+export * from "./md-to-tiptap";
+export * from "./tiptap-to-md";
+
 // Built-in plugins
 import type { MdPlugin } from "./types";
 import { registerPlugins as _register } from "./registry";

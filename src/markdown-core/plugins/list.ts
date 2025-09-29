@@ -1,4 +1,12 @@
-import type { MdPlugin, MdNode, TTNode, ConvertCtx, MdList, MdListItem } from "../types";
+import type {
+  MdPlugin,
+  MdNode,
+  TTNode,
+  ConvertCtx,
+  MdList,
+  MdListItem,
+  TTElement,
+} from "../types";
 
 const list: MdPlugin = {
   name: "list",
@@ -8,28 +16,39 @@ const list: MdPlugin = {
     return node.type === "list";
   },
 
-  toTiptap(node: MdNode, ctx: ConvertCtx) {
+  toTiptap(node: MdNode, ctx: ConvertCtx): TTElement {
     const md = node as MdList;
-    const items: TTNode[] = (md.children ?? []).map((li: MdListItem) => ({
+    const items: TTElement[] = (md.children ?? []).map((li) => ({
       type: "listItem",
       content: ctx.mapMdChildren(li.children),
     }));
-    return md.ordered
-      ? { type: "orderedList", attrs: { start: md.start ?? 1 }, content: items }
+
+    const attrs: Record<string, unknown> | undefined =
+      typeof md.start === "number" && md.start > 1 ? { start: md.start } : undefined;
+
+    const result: TTElement = md.ordered
+      ? (attrs ? { type: "orderedList", attrs, content: items } : { type: "orderedList", content: items })
       : { type: "bulletList", content: items };
+
+    return result;
   },
 
   fromTiptap(node: TTNode, ctx: ConvertCtx) {
     if (node.type !== "bulletList" && node.type !== "orderedList") return null;
-    const children = (node.content ?? []).map((li) => ({
+
+    const children: MdListItem[] = (node.content ?? []).map((li) => ({
       type: "listItem",
       spread: false,
-      children: ctx.mapTiptapChildren(li.content),
+      children: ctx.mapTiptapChildren((li as TTElement).content ?? []),
     }));
+
     return {
       type: "list",
       ordered: node.type === "orderedList",
-      start: node.type === "orderedList" ? (node.attrs?.start ?? 1) : undefined,
+      start:
+        node.type === "orderedList"
+          ? ((node as TTElement).attrs?.start as number | undefined) ?? 1
+          : undefined,
       spread: false,
       children,
     };

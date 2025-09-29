@@ -17,7 +17,7 @@ import taskList from './plugins/task-list';
 import taskItem from './plugins/task-item';
 import text from './plugins/text';
 
-export const plugins: MdPlugin[] = [
+const _plugins: MdPlugin[] = [
   heading,
   bold,
   italic,
@@ -36,3 +36,13 @@ export const plugins: MdPlugin[] = [
   taskItem,
   text,
 ];
+
+export const plugins = _plugins;
+
+export function registerPlugins(list: MdPlugin[]) {
+  _plugins.splice(0, _plugins.length, ...list);
+}
+
+export function clearPlugins() {
+  _plugins.length = 0;
+}
