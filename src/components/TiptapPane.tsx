@@ -43,7 +43,7 @@ export default function TiptapPane({ initialDoc, onUserUpdate, externalDoc }: Pr
   useEffect(() => {
     if (!editor || !externalDoc) return;
     isApplyingExternal.current = true;
-    editor.commands.setContent(externalDoc, { emitUpdate: false });
+    editor.commands.setContent(externalDoc, false);
     // release guard next tick
     setTimeout(() => { isApplyingExternal.current = false; }, 0);
   }, [externalDoc, editor]);
